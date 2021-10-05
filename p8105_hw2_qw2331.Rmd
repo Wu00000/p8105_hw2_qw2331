@@ -88,3 +88,30 @@ snp_df <-
   relocate(year, month)
 ```
 
+Tidy `unemployment.csv` up
+```{r, message = FALSE}
+unemploy_df <- 
+  read_csv("data/fivethirtyeight_datasets/unemployment.csv") %>%
+  pivot_longer(
+    Jan:Dec,
+    names_to = "month",
+    values_to = "unemploy_pect"
+  ) %>% 
+  janitor::clean_names() %>% 
+  mutate(year = as.integer(year),
+         month = match(month, month.abb),
+         month = month.name[month])
+```
+
+Join the datasets by merging `snp`, `pols`, and `unemployment`
+```{r}
+PolEco_df <- 
+  left_join(pols_df, snp_df, by = c("year", "month")) %>% 
+  left_join(unemploy_df, by = c("year", "month"))
+```
+
+The `pols_df` contains `822` observations of `9` variables related to the number of national politicians at any given time;  
+The `snp_df` contains `787` observations of `3` variables related to Standard & Poor's stock market index;  
+The `unemploy_df` contains `816` observations of `3` variables related to the percentage of unemployment in ant given time.
+
+After merging all the datasets above, the result data frame `PolEco_df` contains `r nrow(PolEco_df)` obervations of `r ncol(PolEco_df)` variables. The variable `year` ranges from `r min(pull(PolEco_df, year))` to `r max(pull(PolEco_df, year))`. And the names of key variables are `year` and `month`.
