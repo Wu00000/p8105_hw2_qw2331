@@ -129,6 +129,7 @@ popbaby_df <-
   mutate(
     gender = tolower(gender),
     ethnicity = tolower(ethnicity),
+    first_name = tolower(first_name),
     first_name = capitalize(first_name),
     ethnicity = recode(ethnicity, 
                        "asian and pacific islander" = "asian and paci",
@@ -136,5 +137,37 @@ popbaby_df <-
                        "white non hispanic" = "white non hisp")
   ) %>% 
   distinct()
+```
+
+
+Produce table showing the rank of name "Olivia"
+```{r}
+olivia_df <- 
+  filter(popbaby_df, first_name == "Olivia" & gender == "female") %>% 
+  select(-count) %>% 
+  pivot_wider(
+    names_from = "year_of_birth",
+    values_from = "rank"
+  ) %>% 
+  relocate(c(1:3), c(9:4))
+
+olivia_df %>% 
+  knitr::kable()
+```
+
+
+A similar table showing the most popular male name
+```{r}
+popmale_df <- 
+  filter(popbaby_df, gender == "male" & rank == 1) %>% 
+  select(-count & -rank) %>% 
+  pivot_wider(
+    names_from = "year_of_birth",
+    values_from = "first_name"
+  ) %>% 
+  relocate(1, 2, c(8:3))
+
+popmale_df %>% 
+  knitr::kable()
 ```
 
