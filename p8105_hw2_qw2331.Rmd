@@ -2,3 +2,23 @@
 title: "p8105_hw2_qw2331"
 output: github_document
 ---
+
+```{r, echo = FALSE, message = FALSE}
+library(tidyverse)
+library(readxl)
+```
+
+## Problem 1
+
+Read & clean the Mr. Trash Wheel sheet
+```{r}
+trash_df <- 
+  read_excel(
+    "data/Trash-Wheel-Collection-Totals-8-6-19.xlsx",
+    sheet = "Mr. Trash Wheel",
+    range = "A2:N408") %>% 
+  janitor::clean_names() %>% 
+  filter(is.na(dumpster) == FALSE) %>% 
+  mutate(sports_balls = round(sports_balls))
+```
+
