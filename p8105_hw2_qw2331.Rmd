@@ -22,3 +22,32 @@ trash_df <-
   mutate(sports_balls = round(sports_balls))
 ```
 
+Read & clean precipitation data for 2018 and 2019
+```{r}
+# Read and clean precipitation data for 2018
+precip18_df <- 
+  read_excel(
+    "data/Trash-Wheel-Collection-Totals-8-6-19.xlsx",
+    sheet = "2018 Precipitation",
+    range = "A2:B14") %>% 
+  janitor::clean_names() %>% 
+  drop_na(total) %>% 
+  mutate(year = 2018)
+
+# Read and clean precipitation data for 2019
+precip19_df <- 
+  read_excel(
+    "data/Trash-Wheel-Collection-Totals-8-6-19.xlsx",
+    sheet = "2019 Precipitation",
+    range = "A2:B14") %>% 
+  janitor::clean_names() %>% 
+  drop_na(total) %>% 
+  mutate(year = 2019)
+
+# Combine two data frame & convert `month`
+precip_df <- 
+  bind_rows(precip18_df, precip19_df) %>% 
+  janitor::clean_names() %>% 
+  mutate(month = month.name[month])
+```
+
