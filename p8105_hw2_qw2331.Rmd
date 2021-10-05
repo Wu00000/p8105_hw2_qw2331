@@ -51,3 +51,6 @@ precip_df <-
   mutate(month = month.name[month])
 ```
 
+There are ``r nrow(trash_df)`` observations in the Mr. Trash Wheel dataframe after cleanness and ``r nrow(precip_df)`` in the second dataframe. And the key variables are `month` and `year` since they are used in both data sets. The total precipitation in 2018 is ``r precip_df %>% filter(year == 2018) %>% pull(total) %>% sum()`` and the median number of sports balls in a dumpster in 2019 is ``r trash_df %>% filter(year == 2019) %>% pull(sports_balls) %>% median()``.
+
+
