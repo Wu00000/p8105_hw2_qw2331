@@ -6,6 +6,7 @@ output: github_document
 ```{r, echo = FALSE, message = FALSE}
 library(tidyverse)
 library(readxl)
+library(Hmisc)
 ```
 
 ## Problem 1
@@ -115,3 +116,25 @@ The `snp_df` contains `787` observations of `3` variables related to Standard & 
 The `unemploy_df` contains `816` observations of `3` variables related to the percentage of unemployment in ant given time.
 
 After merging all the datasets above, the result data frame `PolEco_df` contains `r nrow(PolEco_df)` obervations of `r ncol(PolEco_df)` variables. The variable `year` ranges from `r min(pull(PolEco_df, year))` to `r max(pull(PolEco_df, year))`. And the names of key variables are `year` and `month`.
+
+
+## Problem 3
+
+Load `Popular_Baby_Names.csv` and tidy up
+```{r, message = FALSE}
+popbaby_df <- 
+  read_csv("data/Popular_Baby_Names.csv") %>% 
+  janitor::clean_names() %>% 
+  rename(first_name = childs_first_name) %>% 
+  mutate(
+    gender = tolower(gender),
+    ethnicity = tolower(ethnicity),
+    first_name = capitalize(first_name),
+    ethnicity = recode(ethnicity, 
+                       "asian and pacific islander" = "asian and paci",
+                       "black non hispanic" = "black non hisp",
+                       "white non hispanic" = "white non hisp")
+  ) %>% 
+  distinct()
+```
+
