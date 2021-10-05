@@ -54,3 +54,21 @@ precip_df <-
 There are ``r nrow(trash_df)`` observations in the Mr. Trash Wheel dataframe after cleanness and ``r nrow(precip_df)`` in the second dataframe. And the key variables are `month` and `year` since they are used in both data sets. The total precipitation in 2018 is ``r precip_df %>% filter(year == 2018) %>% pull(total) %>% sum()`` and the median number of sports balls in a dumpster in 2019 is ``r trash_df %>% filter(year == 2019) %>% pull(sports_balls) %>% median()``.
 
 
+## Problem 2
+
+Clean `pols-month.csv`
+```{r}
+pols_df <- 
+  read_csv("data/fivethirtyeight_datasets/pols-month.csv") %>% 
+  janitor::clean_names() %>% 
+  separate(mon, into = c("year", "month", "day")) %>% 
+  mutate(year = as.integer(year),
+         month = as.integer(month), 
+         day = as.integer(day),
+         month = month.name[month],
+         president = ifelse(prez_gop == 0, "dem", "gop")
+         ) %>% 
+  select(-prez_dem & -prez_gop & -day) %>% 
+  relocate(year, month, president)
+```
+
