@@ -57,7 +57,7 @@ There are ``r nrow(trash_df)`` observations in the Mr. Trash Wheel dataframe aft
 ## Problem 2
 
 Clean `pols-month.csv`
-```{r}
+```{r, message = FALSE}
 pols_df <- 
   read_csv("data/fivethirtyeight_datasets/pols-month.csv") %>% 
   janitor::clean_names() %>% 
@@ -70,5 +70,21 @@ pols_df <-
          ) %>% 
   select(-prez_dem & -prez_gop & -day) %>% 
   relocate(year, month, president)
+```
+
+Clean `snp.csv`
+```{r, message = FALSE}
+snp_df <- 
+  read_csv("data/fivethirtyeight_datasets/snp.csv") %>% 
+  janitor::clean_names() %>% 
+  mutate(date = lubridate::mdy(date)) %>% 
+  separate(date, into = c("year", "month", "day")) %>% 
+  mutate(year = as.integer(year),
+         month = as.integer(month),
+         day = as.integer(day),
+         month = month.name[month]) %>% 
+  select(-day) %>% 
+  arrange(year, month) %>% 
+  relocate(year, month)
 ```
 
