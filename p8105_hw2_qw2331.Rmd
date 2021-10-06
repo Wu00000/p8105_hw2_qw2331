@@ -171,3 +171,21 @@ popmale_df %>%
   knitr::kable()
 ```
 
+
+Produce a scatter plot
+```{r, fig.width = 10}
+# Select the data for plotting
+wnhmale_df <- 
+  filter(
+    popbaby_df, 
+    gender == "male" & ethnicity == "white non hisp" & year_of_birth == 2016)
+
+# Let's plot
+wnhmale_df %>% 
+  ggplot(aes(x = rank, y = count)) + 
+  geom_point(alpha = .3) + 
+  xlab("Rank of a name") + ylab("# of children with a name") + 
+  labs(title = "Scatterplot",
+       subtitle = "Rank of a name Vs. Number of children")
+```
+
