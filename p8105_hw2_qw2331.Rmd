@@ -5,6 +5,15 @@ output: github_document
 
 ```{r, echo = FALSE, message = FALSE}
 library(tidyverse)
+
+knitr::opts_chunk$set(
+  fig.width = 10,
+  fig.asp = .6,
+  out.width = "90%"
+)
+
+theme_set(theme_minimal() + theme(legend.position = "bottom"))
+
 library(readxl)
 library(Hmisc)
 ```
@@ -15,7 +24,7 @@ Read & clean the Mr. Trash Wheel sheet
 ```{r}
 trash_df <- 
   read_excel(
-    "data/Trash-Wheel-Collection-Totals-8-6-19.xlsx",
+    "data/Trash-Wheel-Collection-Totals-7-2020-2.xlsx",
     sheet = "Mr. Trash Wheel",
     range = "A2:N408") %>% 
   janitor::clean_names() %>% 
@@ -28,21 +37,21 @@ Read & clean precipitation data for 2018 and 2019
 # Read and clean precipitation data for 2018
 precip18_df <- 
   read_excel(
-    "data/Trash-Wheel-Collection-Totals-8-6-19.xlsx",
+    "data/Trash-Wheel-Collection-Totals-7-2020-2.xlsx",
     sheet = "2018 Precipitation",
     range = "A2:B14") %>% 
   janitor::clean_names() %>% 
-  drop_na(total) %>% 
+  drop_na(month) %>% 
   mutate(year = 2018)
 
 # Read and clean precipitation data for 2019
 precip19_df <- 
   read_excel(
-    "data/Trash-Wheel-Collection-Totals-8-6-19.xlsx",
+    "data/Trash-Wheel-Collection-Totals-7-2020-2.xlsx",
     sheet = "2019 Precipitation",
     range = "A2:B14") %>% 
   janitor::clean_names() %>% 
-  drop_na(total) %>% 
+  drop_na(month) %>% 
   mutate(year = 2019)
 
 # Combine two data frame & convert `month`
@@ -52,7 +61,9 @@ precip_df <-
   mutate(month = month.name[month])
 ```
 
-There are ``r nrow(trash_df)`` observations in the Mr. Trash Wheel dataframe after cleanness and ``r nrow(precip_df)`` in the second dataframe. And the key variables are `month` and `year` since they are used in both data sets. The total precipitation in 2018 is ``r precip_df %>% filter(year == 2018) %>% pull(total) %>% sum()`` and the median number of sports balls in a dumpster in 2019 is ``r trash_df %>% filter(year == 2019) %>% pull(sports_balls) %>% median()``.
+There are ``r nrow(trash_df)`` observations in the Mr. Trash Wheel dataframe after cleanness and ``r nrow(precip_df)`` in the second one after combination. Among all ``r ncol(trash_df)`` variables in dataset `trash_df` (``r names(trash_df)``) and ``r ncol(precip_df)`` variables in the dataset `precip_df` (``r names(precip_df)``). The key variables are `month` and `year` since they are in both datasets and can be used to join these two datasets. 
+
+For available data, the total precipitation in 2018 is ``r precip18_df %>% pull(total) %>% sum()`` and the median number of sports balls in a dumpster in 2019 is ``r trash_df %>% filter(year == 2019) %>% pull(sports_balls) %>% median()``.
 
 
 ## Problem 2
@@ -115,7 +126,7 @@ The `pols_df` contains `822` observations of `9` variables related to the number
 The `snp_df` contains `787` observations of `3` variables related to Standard & Poor's stock market index;  
 The `unemploy_df` contains `816` observations of `3` variables related to the percentage of unemployment in ant given time.
 
-After merging all the datasets above, the result data frame `PolEco_df` contains `r nrow(PolEco_df)` obervations of `r ncol(PolEco_df)` variables. The variable `year` ranges from `r min(pull(PolEco_df, year))` to `r max(pull(PolEco_df, year))`. And the names of key variables are `year` and `month`.
+After merging all the datasets, the resulting dataframe `PolEco_df` contains ``r nrow(PolEco_df)`` obervations of ``r ncol(PolEco_df)`` variables. The variable `year` ranges from ``r min(pull(PolEco_df, year))`` to ``r max(pull(PolEco_df, year))``. And the names of key variables are `year` and `month`.
 
 
 ## Problem 3
@@ -140,7 +151,7 @@ popbaby_df <-
 ```
 
 
-Produce table showing the rank of name "Olivia"
+Produce table showing the rank of female name "Olivia"
 ```{r}
 olivia_df <- 
   filter(popbaby_df, first_name == "Olivia" & gender == "female") %>% 
@@ -173,7 +184,7 @@ popmale_df %>%
 
 
 Produce a scatter plot
-```{r, fig.width = 10}
+```{r}
 # Select the data for plotting
 wnhmale_df <- 
   filter(
@@ -184,8 +195,11 @@ wnhmale_df <-
 wnhmale_df %>% 
   ggplot(aes(x = rank, y = count)) + 
   geom_point(alpha = .3) + 
-  xlab("Rank of a name") + ylab("# of children with a name") + 
-  labs(title = "Scatterplot",
-       subtitle = "Rank of a name Vs. Number of children")
+  labs(
+    title = "Scatterplot",
+    subtitle = "Rank VS. Number of childern",
+    x = "Rank of a name",
+    y = "Number of children with a name"
+  )
 ```
 
