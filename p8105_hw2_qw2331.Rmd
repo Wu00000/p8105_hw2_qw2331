@@ -20,19 +20,19 @@ library(Hmisc)
 
 ## Problem 1
 
-Read & clean the Mr. Trash Wheel sheet
+**Read & clean the Mr. Trash Wheel sheet**
 ```{r}
 trash_df <- 
   read_excel(
     "data/Trash-Wheel-Collection-Totals-7-2020-2.xlsx",
     sheet = "Mr. Trash Wheel",
-    range = "A2:N408") %>% 
+    range = "A2:N534") %>% 
   janitor::clean_names() %>% 
   filter(is.na(dumpster) == FALSE) %>% 
   mutate(sports_balls = round(sports_balls))
 ```
 
-Read & clean precipitation data for 2018 and 2019
+**Read & clean precipitation data for 2018 and 2019**
 ```{r}
 # Read and clean precipitation data for 2018
 precip18_df <- 
@@ -58,9 +58,11 @@ precip19_df <-
 precip_df <- 
   bind_rows(precip18_df, precip19_df) %>% 
   janitor::clean_names() %>% 
-  mutate(month = month.name[month])
+  mutate(month = month.name[month]) %>% 
+  relocate(year, month, total)
 ```
 
+**A brief description about the data**  
 There are ``r nrow(trash_df)`` observations in the Mr. Trash Wheel dataframe after cleanness and ``r nrow(precip_df)`` in the second one after combination. Among all ``r ncol(trash_df)`` variables in dataset `trash_df` (``r names(trash_df)``) and ``r ncol(precip_df)`` variables in the dataset `precip_df` (``r names(precip_df)``). The key variables are `month` and `year` since they are in both datasets and can be used to join these two datasets. 
 
 For available data, the total precipitation in 2018 is ``r precip18_df %>% pull(total) %>% sum()`` and the median number of sports balls in a dumpster in 2019 is ``r trash_df %>% filter(year == 2019) %>% pull(sports_balls) %>% median()``.
@@ -68,7 +70,7 @@ For available data, the total precipitation in 2018 is ``r precip18_df %>% pull(
 
 ## Problem 2
 
-Clean `pols-month.csv`
+**Clean `pols-month.csv`**
 ```{r, message = FALSE}
 pols_df <- 
   read_csv("data/fivethirtyeight_datasets/pols-month.csv") %>% 
@@ -84,7 +86,7 @@ pols_df <-
   relocate(year, month, president)
 ```
 
-Clean `snp.csv`
+**Clean `snp.csv`**
 ```{r, message = FALSE}
 snp_df <- 
   read_csv("data/fivethirtyeight_datasets/snp.csv") %>% 
@@ -100,7 +102,7 @@ snp_df <-
   relocate(year, month)
 ```
 
-Tidy `unemployment.csv` up
+**Tidy `unemployment.csv` up**
 ```{r, message = FALSE}
 unemploy_df <- 
   read_csv("data/fivethirtyeight_datasets/unemployment.csv") %>%
@@ -115,13 +117,14 @@ unemploy_df <-
          month = month.name[month])
 ```
 
-Join the datasets by merging `snp`, `pols`, and `unemployment`
+**Join the datasets by merging `snp`, `pols`, and `unemployment`**
 ```{r}
 PolEco_df <- 
   left_join(pols_df, snp_df, by = c("year", "month")) %>% 
   left_join(unemploy_df, by = c("year", "month"))
 ```
 
+**A brief description about the data**  
 The `pols_df` contains `822` observations of `9` variables related to the number of national politicians at any given time;  
 The `snp_df` contains `787` observations of `3` variables related to Standard & Poor's stock market index;  
 The `unemploy_df` contains `816` observations of `3` variables related to the percentage of unemployment in ant given time.
@@ -131,7 +134,7 @@ After merging all the datasets, the resulting dataframe `PolEco_df` contains ``r
 
 ## Problem 3
 
-Load `Popular_Baby_Names.csv` and tidy up
+**Load `Popular_Baby_Names.csv` and tidy up**
 ```{r, message = FALSE}
 popbaby_df <- 
   read_csv("data/Popular_Baby_Names.csv") %>% 
@@ -151,7 +154,7 @@ popbaby_df <-
 ```
 
 
-Produce table showing the rank of female name "Olivia"
+**Produce table showing the rank of female name "Olivia"**
 ```{r}
 olivia_df <- 
   filter(popbaby_df, first_name == "Olivia" & gender == "female") %>% 
@@ -167,7 +170,7 @@ olivia_df %>%
 ```
 
 
-A similar table showing the most popular male name
+**A similar table showing the most popular male name**
 ```{r}
 popmale_df <- 
   filter(popbaby_df, gender == "male" & rank == 1) %>% 
@@ -183,7 +186,7 @@ popmale_df %>%
 ```
 
 
-Produce a scatter plot
+**Produce a scatter plot**
 ```{r}
 # Select the data for plotting
 wnhmale_df <- 
